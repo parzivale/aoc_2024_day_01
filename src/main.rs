@@ -13,14 +13,22 @@ mod error;
 // Split the string line into a pair of integers. Throw a ParseIntError error if not parsed
 fn split_int_pair(in_string: &str) -> Result<(i32, i32), Day1Error> {
     let mut splitter = in_string.splitn(2, "   ");
-    let first = splitter
-        .next()
+    let first = splitter.next();
+    let first = first
         .ok_or(SplitIntError::FirstSplitError)?
-        .parse::<i32>()?;
-    let second = splitter
-        .next()
+        .parse::<i32>()
+        .map_err(|e| Day1Error::Parse {
+            got: first.map(|s| s.to_string()),
+            source: e,
+        })?;
+    let second = splitter.next();
+    let second = second
         .ok_or(SplitIntError::SecondSplitError)?
-        .parse::<i32>()?;
+        .parse::<i32>()
+        .map_err(|e| Day1Error::Parse {
+            got: second.map(|s| s.to_string()),
+            source: e,
+        })?;
     Ok((first, second))
 }
 
