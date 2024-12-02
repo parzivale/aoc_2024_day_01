@@ -1,6 +1,7 @@
 use std::env;
 use std::fs;
 use std::num::ParseIntError;
+use std::collections::HashMap;
 
 // From https://doc.rust-lang.org/rust-by-example/error/result/enter_question_mark.html
 fn split_int_pair(in_string: &str) -> Result<(i32,i32), ParseIntError> {
@@ -8,6 +9,22 @@ fn split_int_pair(in_string: &str) -> Result<(i32,i32), ParseIntError> {
     let first = splitter.next().unwrap().parse::<i32>()?;
     let second = splitter.next().unwrap().parse::<i32>()?;
     Ok((first, second))
+}
+
+fn build_integer_map(int_vector : &Vec<i32>) -> HashMap<i32,i32> {
+    let mut value_count_map = HashMap::<i32,i32>::new();
+
+    for int_value_ref in int_vector.iter() {
+        let int_value:i32=int_value_ref.abs();
+        if (value_count_map.contains_key(int_value_ref))
+        {
+            // Increment
+            *value_count_map.get_mut(int_value_ref).unwrap()+=1;
+        } else {
+            value_count_map.insert(int_value,1);
+        }
+    }
+    value_count_map
 }
 
 fn main() -> std::io::Result<()>{
@@ -51,6 +68,28 @@ fn main() -> std::io::Result<()>{
     }
 
     println!("Total distance {total_distance}");
+
+    // Calculate similarity
+    let left_count_map=build_integer_map(&left_column_values);
+    let right_count_map=build_integer_map(&right_column_values);
+
+    let mut total_similarity=0;
+
+    for left_val in left_column_values.iter() {
+        if (right_count_map.contains_key(left_val))
+        {
+            let right_count=right_count_map.get(left_val).unwrap();
+            // Multiply
+            total_similarity+=left_val*right_count;
+            println!("Number {left_val} found count {right_count}");
+        }
+        else {
+            println!("Number {left_val} not found in map")
+        }
+
+    }
+
+    println!("Total similarity {total_similarity}");
 
     Ok(())
 }
