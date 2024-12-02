@@ -38,7 +38,7 @@ fn build_integer_map(int_vector: &[i32]) -> HashMap<i32, i32> {
     value_count_map
 }
 
-fn main() -> std::io::Result<()> {
+fn main() {
     let path = env::current_dir();
 
     let path = match path {
@@ -110,6 +110,4 @@ fn main() -> std::io::Result<()> {
         });
 
     println!("Total similarity {total_similarity}");
-
-    Ok(())
 }
